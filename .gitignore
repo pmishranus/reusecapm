@@ -101,9 +101,6 @@ pids
 # SAP CAP specific
 .cds/
 gen/
-srv/
-db/
-app/
 *.db
 *.sqlite
 *.sqlite3
@@ -167,9 +164,6 @@ mta_archives/
 # SAP CAP generated files
 .cds/
 gen/
-srv/
-db/
-app/
 
 # Temporary files
 tmp/

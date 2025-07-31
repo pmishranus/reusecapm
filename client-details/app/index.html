@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Details Dashboard - CAPM Reuse Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .dashboard-card {
+            transition: transform 0.2s;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-badge {
+            font-size: 0.8em;
+            padding: 0.25em 0.6em;
+        }
+
+        .employee-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #007bff, #6610f2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .error-message {
+            display: none;
+            color: #dc3545;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .project-card {
+            border-left: 4px solid #007bff;
+        }
+
+        .client-card {
+            border-left: 4px solid #28a745;
+        }
+
+        .employee-card {
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chart-line me-2"></i>
+                CAPM Reuse & Compose Dashboard
+            </a>
+            <div class="navbar-nav me-auto">
+                <a class="nav-link" href="create-client.html">
+                    <i class="fas fa-user-plus me-1"></i>
+                    Create Client with Employee
+                </a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text">
+                    <i class="fas fa-sync-alt me-1"></i>
+                    <span id="lastUpdated">Loading...</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card dashboard-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h4 id="totalClients">-</h4>
+                        <p class="mb-0">Total Clients</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card dashboard-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-project-diagram fa-2x mb-2"></i>
+                        <h4 id="totalProjects">-</h4>
+                        <p class="mb-0">Active Projects</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card dashboard-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-tie fa-2x mb-2"></i>
+                        <h4 id="totalEmployees">-</h4>
+                        <p class="mb-0">Available Employees</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card dashboard-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users-cog fa-2x mb-2"></i>
+                        <h4 id="totalTeamMembers">-</h4>
+                        <p class="mb-0">Project Team Members</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading and Error Messages -->
+        <div id="loading" class="text-center loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading data from CAPM services...</p>
+        </div>
+
+        <div id="errorMessage" class="alert alert-danger error-message" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" style="display: none;">
+            <!-- Projects with Team Members -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card dashboard-card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-project-diagram me-2"></i>
+                                Projects & Team Members
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="projectsContainer" class="row">
+                                <!-- Projects will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clients with Account Managers -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card dashboard-card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-building me-2"></i>
+                                Clients & Account Managers
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="clientsContainer" class="row">
+                                <!-- Clients will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Employees -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card dashboard-card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-tie me-2"></i>
+                                Available Employees (from Employee Master Data)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="employeesContainer" class="row">
+                                <!-- Employees will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configuration
+        const config = {
+            dashboardServiceUrl: '/dashboard',
+            clientServiceUrl: '/client',
+            employeeServiceUrl: '/employee'
+        };
+
+        // Utility functions
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent =
+                `Last updated: ${now.toLocaleTimeString()}`;
+        }
+
+        // API functions
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.value || data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                throw error;
+            }
+        }
+
+        // Data loading functions
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(`${config.dashboardServiceUrl}/getDashboardData`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                throw error;
+            }
+        }
+
+        async function loadProjects() {
+            try {
+                const projects = await fetchData(`${config.clientServiceUrl}/Projects?$expand=projectManager,teamMembers/employee`);
+                return projects;
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                return [];
+            }
+        }
+
+        async function loadClients() {
+            try {
+                const clients = await fetchData(`${config.clientServiceUrl}/Clients?$expand=accountManager`);
+                return clients;
+            } catch (error) {
+                console.error('Error loading clients:', error);
+                return [];
+            }
+        }
+
+        async function loadEmployees() {
+            try {
+                const employees = await fetchData(`${config.employeeServiceUrl}/Employees?$expand=department,position`);
+                return employees;
+            } catch (error) {
+                console.error('Error loading employees:', error);
+                return [];
+            }
+        }
+
+        // Rendering functions
+        function renderProjects(projects) {
+            const container = document.getElementById('projectsContainer');
+            container.innerHTML = '';
+
+            if (projects.length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-muted">No projects found.</p></div>';
+                return;
+            }
+
+            projects.forEach(project => {
+                const projectCard = `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card project-card dashboard-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-0">${project.name}</h6>
+                                    <span class="badge status-badge bg-${getStatusColor(project.status)}">${project.status}</span>
+                                </div>
+                                <p class="card-text text-muted small">${project.description || 'No description'}</p>
+                                <div class="row text-muted small">
+                                    <div class="col-6">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        ${formatDate(project.startDate)}
+                                    </div>
+                                    <div class="col-6">
+                                        <i class="fas fa-dollar-sign me-1"></i>
+                                        ${formatCurrency(project.budget)}
+                                    </div>
+                                </div>
+                                ${renderProjectManager(project.projectManager)}
+                                ${renderTeamMembers(project.teamMembers)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += projectCard;
+            });
+        }
+
+        function renderClients(clients) {
+            const container = document.getElementById('clientsContainer');
+            container.innerHTML = '';
+
+            if (clients.length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-muted">No clients found.</p></div>';
+                return;
+            }
+
+            clients.forEach(client => {
+                const clientCard = `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card client-card dashboard-card h-100">
+                            <div class="card-body">
+                                <h6 class="card-title">${client.name}</h6>
+                                <p class="card-text text-muted small">${client.industry} • ${client.size}</p>
+                                <div class="d-flex align-items-center">
+                                    <div class="employee-avatar me-2">
+                                        ${getInitials(client.accountManager?.firstName || 'N', client.accountManager?.lastName || 'A')}
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Account Manager</small><br>
+                                        <small>${client.accountManager?.firstName || 'N/A'} ${client.accountManager?.lastName || ''}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += clientCard;
+            });
+        }
+
+        function renderEmployees(employees) {
+            const container = document.getElementById('employeesContainer');
+            container.innerHTML = '';
+
+            if (employees.length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-muted">No employees found.</p></div>';
+                return;
+            }
+
+            employees.forEach(employee => {
+                const employeeCard = `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card employee-card dashboard-card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="employee-avatar me-3">
+                                        ${getInitials(employee.firstName, employee.lastName)}
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-0">${employee.firstName} ${employee.lastName}</h6>
+                                        <small class="text-muted">${employee.position?.title || 'N/A'}</small>
+                                    </div>
+                                </div>
+                                <div class="row text-muted small">
+                                    <div class="col-6">
+                                        <i class="fas fa-building me-1"></i>
+                                        ${employee.department?.name || 'N/A'}
+                                    </div>
+                                    <div class="col-6">
+                                        <i class="fas fa-envelope me-1"></i>
+                                        ${employee.email || 'N/A'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += employeeCard;
+            });
+        }
+
+        function renderProjectManager(projectManager) {
+            if (!projectManager) return '';
+            return `
+                <div class="mt-2">
+                    <small class="text-muted">Project Manager:</small><br>
+                    <div class="d-flex align-items-center">
+                        <div class="employee-avatar me-2" style="width: 30px; height: 30px; font-size: 0.8em;">
+                            ${getInitials(projectManager.firstName, projectManager.lastName)}
+                        </div>
+                        <small>${projectManager.firstName} ${projectManager.lastName}</small>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTeamMembers(teamMembers) {
+            if (!teamMembers || teamMembers.length === 0) return '';
+
+            const memberAvatars = teamMembers.slice(0, 3).map(member =>
+                `<div class="employee-avatar me-1" style="width: 25px; height: 25px; font-size: 0.7em;">
+                    ${getInitials(member.employee?.firstName || 'N', member.employee?.lastName || 'A')}
+                </div>`
+            ).join('');
+
+            const additionalCount = teamMembers.length > 3 ? `+${teamMembers.length - 3}` : '';
+
+            return `
+                <div class="mt-2">
+                    <small class="text-muted">Team Members (${teamMembers.length}):</small><br>
+                    <div class="d-flex align-items-center">
+                        ${memberAvatars}
+                        ${additionalCount ? `<small class="text-muted">${additionalCount}</small>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Utility functions
+        function getStatusColor(status) {
+            const colors = {
+                'planning': 'secondary',
+                'active': 'success',
+                'completed': 'info',
+                'onHold': 'warning',
+                'cancelled': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        function formatCurrency(amount) {
+            if (!amount) return 'N/A';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function getInitials(firstName, lastName) {
+            const first = firstName ? firstName.charAt(0).toUpperCase() : 'N';
+            const last = lastName ? lastName.charAt(0).toUpperCase() : 'A';
+            return first + last;
+        }
+
+                // Main initialization
+        async function initializeDashboard() {
+            showLoading();
+            updateLastUpdated();
+
+            try {
+                // Try to load dashboard data first (aggregated)
+                try {
+                    const dashboardData = await loadDashboardData();
+                    
+                    // Update statistics
+                    document.getElementById('totalClients').textContent = dashboardData.stats.totalClients;
+                    document.getElementById('totalProjects').textContent = dashboardData.stats.activeProjects;
+                    document.getElementById('totalEmployees').textContent = dashboardData.stats.totalEmployees;
+                    document.getElementById('totalTeamMembers').textContent = dashboardData.stats.totalTeamMembers;
+
+                    // Render data
+                    renderProjects(dashboardData.projects);
+                    renderClients(dashboardData.clients);
+                    renderEmployees(dashboardData.employees);
+
+                    hideLoading();
+                    return;
+                } catch (dashboardError) {
+                    console.warn('Dashboard service not available, falling back to individual services:', dashboardError);
+                }
+
+                // Fallback: Load all data in parallel from individual services
+                const [projects, clients, employees] = await Promise.all([
+                    loadProjects(),
+                    loadClients(),
+                    loadEmployees()
+                ]);
+
+                // Update statistics
+                document.getElementById('totalClients').textContent = clients.length;
+                document.getElementById('totalProjects').textContent = projects.filter(p => p.status === 'active').length;
+                document.getElementById('totalEmployees').textContent = employees.length;
+                document.getElementById('totalTeamMembers').textContent = 
+                    projects.reduce((total, p) => total + (p.teamMembers?.length || 0), 0);
+
+                // Render data
+                renderProjects(projects);
+                renderClients(clients);
+                renderEmployees(employees);
+
+                hideLoading();
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                showError('Failed to load dashboard data. Please check the console for details.');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            initializeDashboard();
+        }, 30000);
+    </script>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 namespace com.client.details;
 
-using com.employee.master as employee from 'employee-master/db/schema';
+// Employee associations will be handled via service consumption
 
 entity Client {
     key ID             : UUID;
@@ -10,7 +10,7 @@ entity Client {
         size           : String(20);
         website        : String(200);
         isActive       : Boolean default true;
-        accountManager : Association to employee.Employee;
+        accountManagerID : UUID; // Will be linked to employee via service
         projects       : Association to many Project
                              on projects.client = $self;
         contacts       : Association to many Contact
@@ -35,7 +35,7 @@ entity Project {
         };
         budget         : Decimal(12, 2);
         client         : Association to Client;
-        projectManager : Association to employee.Employee;
+        projectManagerID : UUID; // Will be linked to employee via service
         teamMembers    : Association to many ProjectTeamMember
                              on teamMembers.project = $self;
         createdAt      : Timestamp  @cds.on.insert: $now;
@@ -45,7 +45,7 @@ entity Project {
 entity ProjectTeamMember {
     key ID         : UUID;
         project    : Association to Project;
-        employee   : Association to employee.Employee;
+        employeeID : UUID; // Will be linked to employee via service
         role       : String(50);
         startDate  : Date;
         endDate    : Date;

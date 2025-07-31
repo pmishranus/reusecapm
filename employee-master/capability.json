@@ -1,0 +1,20 @@
+{
+    "cds": {
+        "capabilities": {
+            "EmployeeService": {
+                "version": "1.0.0",
+                "description": "Employee Master Data Service",
+                "entities": [
+                    "Employee",
+                    "Department",
+                    "Position"
+                ],
+                "actions": [
+                    "hireEmployee",
+                    "terminateEmployee",
+                    "transferEmployee"
+                ]
+            }
+        }
+    }
+}

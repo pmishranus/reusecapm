@@ -23,6 +23,9 @@ modules:
       - name: srv-api # required by consumers of CAP services (e.g. approuter)
         properties:
           srv-url: ${default-url}
+      - name: employee-master-api
+        properties:
+          srv-url: ${default-url}
     requires:
       - name: employee-master-auth
       - name: employee-master-db

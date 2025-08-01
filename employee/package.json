@@ -25,7 +25,7 @@
         "hanadeploy": "cds build && cds deploy --to hana:employee-master-db",
         "currtcp": "lsof -i tcp:4004",
         "runlib": "npm install && cd app && npm install & cd ..",
-        "deploy": "cds build && mbt build -t gen --mtar archive && cf deploy /home/user/projects/employee/gen/archive.mtar -f"
+        "deploy": "cds build && mbt build -t gen --mtar archive && cf deploy /home/user/projects/reusecapm/employee/gen/archive.mtar -f"
     },
     "cds": {
         "requires": {

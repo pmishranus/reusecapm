@@ -34,6 +34,9 @@
       },
       "auth": {
         "kind": "dummy"
+      },
+      "EmployeeService": {
+        "kind": "odata"
       }
     }
   }

@@ -1,0 +1,39 @@
+### Test Consumer Service - Get Employee Info with Salary
+GET https://consumer-service.cfapps.sap.hana.ondemand.com/consumer/getEmployeeInfo(employeeNumber='EMP001')
+Content-Type: application/json
+
+### Test Consumer Service - Get All Employees with Salary
+GET https://consumer-service.cfapps.sap.hana.ondemand.com/consumer/getAllEmployeesWithSalary()
+Content-Type: application/json
+
+### Test Consumer Service - Get Salaries
+GET https://consumer-service.cfapps.sap.hana.ondemand.com/consumer/Salaries
+Content-Type: application/json
+
+### Test Consumer Service - Create Salary Record
+POST https://consumer-service.cfapps.sap.hana.ondemand.com/consumer/createSalary
+Content-Type: application/json
+
+{
+    "employeeID": "550e8400-e29b-41d4-a716-446655440005",
+    "baseSalary": 55000.00,
+    "bonus": 5500.00,
+    "allowances": 2200.00,
+    "effectiveDate": "2024-01-01",
+    "endDate": "2024-12-31"
+}
+
+### Test Consumer Service - Create Salary Record via POST
+POST https://consumer-service.cfapps.sap.hana.ondemand.com/consumer/Salaries
+Content-Type: application/json
+
+{
+    "ID": "550e8400-e29b-41d4-a716-446655440005",
+    "employeeID": "550e8400-e29b-41d4-a716-446655440005",
+    "baseSalary": 55000.00,
+    "bonus": 5500.00,
+    "allowances": 2200.00,
+    "effectiveDate": "2024-01-01",
+    "endDate": "2024-12-31",
+    "isActive": "Y"
+} 

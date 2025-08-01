@@ -25,6 +25,7 @@ modules:
           srv-url: ${default-url}
     requires:
       - name: consumer-db
+      - name: employee-service-destination
 
   - name: consumer-db-deployer
     type: hdb
@@ -40,3 +41,13 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+
+  - name: employee-service-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+      config:
+        name: EmployeeService
+        url: ~{employee-service-url}
+        forwardAuthToken: true

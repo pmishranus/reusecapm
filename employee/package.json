@@ -1,0 +1,46 @@
+{
+    "name": "employee-master",
+    "version": "1.0.0",
+    "description": "A simple CAP project.",
+    "repository": "<Add your repository here>",
+    "license": "UNLICENSED",
+    "private": true,
+    "dependencies": {
+        "@sap/cds": "^8",
+        "@sap/cds-hana": "^2",
+        "@sap/xsenv": "^5.5.0",
+        "@sap/cds-odata-v2-adapter-proxy": "1.9.21",
+        "@sap/hdi": "^4.7.0",
+        "@sap/hdi-deploy": "^5.4.2",
+        "@sap/xssec": "^4.9.0",
+        "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "@sap/cds-dk": "^8"
+    },
+    "scripts": {
+        "start": "cds-serve",
+        "approuter": "npm start --prefix app",
+        "profile": "cds watch --profile hybrid",
+        "hanadeploy": "cds build && cds deploy --to hana:employee-master-db",
+        "currtcp": "lsof -i tcp:4004",
+        "runlib": "npm install && cd app && npm install & cd ..",
+        "deploy": "cds build && mbt build -t gen --mtar archive && cf deploy /home/user/projects/employee/gen/archive.mtar -f"
+    },
+    "cds": {
+        "requires": {
+            "db": {
+                "kind": "hana"
+            },
+            "auth": {
+                "kind": "dummy"
+            }
+        },
+        "provides": {
+            "EmployeeService": {
+                "kind": "odata",
+                "model": "srv/employee-service"
+            }
+        }
+    }
+}

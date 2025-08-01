@@ -1,0 +1,40 @@
+{
+    "xsappname": "employee-master",
+    "tenant-mode": "dedicated",
+    "scopes": [
+        {
+            "name": "$XSAPPNAME.Admin",
+            "description": "Admin"
+        },
+        {
+            "name": "$XSAPPNAME.User",
+            "description": "User"
+        }
+    ],
+    "role-templates": [
+        {
+            "name": "Admin",
+            "scope-references": [
+                "$XSAPPNAME.Admin"
+            ]
+        },
+        {
+            "name": "User",
+            "scope-references": [
+                "$XSAPPNAME.User"
+            ]
+        }
+    ],
+    "oauth2-configuration": {
+        "token-validity": 36000,
+        "credential-types": [
+            "binding-secret",
+            "x509"
+        ],
+        "redirect-uris": [
+            "https://*.applicationstudio.cloud.sap/**",
+            "https://*.cfapps.eu10-004.hana.ondemand.com/login/callback",
+            "https://*.hana.ondemand.com/**"
+        ]
+    }
+}

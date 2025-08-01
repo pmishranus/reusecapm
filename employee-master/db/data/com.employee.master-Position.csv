@@ -1,8 +1,0 @@
-ID,title,code,description,level,isActive
-650e8400-e29b-41d4-a716-446655440001,Software Engineer,SE,Software Development Engineer,3,true
-650e8400-e29b-41d4-a716-446655440002,Senior Software Engineer,SSE,Senior Software Development Engineer,4,true
-650e8400-e29b-41d4-a716-446655440003,Project Manager,PM,Project Management Role,4,true
-650e8400-e29b-41d4-a716-446655440004,Account Manager,AM,Client Account Management,3,true
-650e8400-e29b-41d4-a716-446655440005,HR Specialist,HRS,Human Resources Specialist,2,true
-650e8400-e29b-41d4-a716-446655440006,Financial Analyst,FA,Financial Analysis and Reporting,3,true
-650e8400-e29b-41d4-a716-446655440007,Operations Manager,OM,Operations and Support Management,4,true 

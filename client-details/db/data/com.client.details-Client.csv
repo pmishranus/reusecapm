@@ -1,6 +1,0 @@
-ID,clientNumber,name,industry,size,website,isActive,accountManager_ID
-850e8400-e29b-41d4-a716-446655440001,CLI001,TechCorp Solutions,Technology,Large,https://techcorp.com,true,750e8400-e29b-41d4-a716-446655440002
-850e8400-e29b-41d4-a716-446655440002,CLI002,Global Manufacturing,Manufacturing,Medium,https://globalmfg.com,true,750e8400-e29b-41d4-a716-446655440002
-850e8400-e29b-41d4-a716-446655440003,CLI003,FinanceFirst Bank,Financial Services,Large,https://financefirst.com,true,750e8400-e29b-41d4-a716-446655440002
-850e8400-e29b-41d4-a716-446655440004,CLI004,RetailPlus Stores,Retail,Medium,https://retailplus.com,true,750e8400-e29b-41d4-a716-446655440002
-850e8400-e29b-41d4-a716-446655440005,CLI005,Healthcare Systems,Healthcare,Large,https://healthcaresys.com,true,750e8400-e29b-41d4-a716-446655440002 
